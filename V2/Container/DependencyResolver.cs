@@ -17,6 +17,8 @@ public class DependencyResolver(DependencyContainer container)
             return CreateImplementation(dependency, t=> Activator.CreateInstance(t));
 
         List<object> parameterImplementations = new List<object>();
+
+        
         foreach ( var parameter in parameters)
         {
             if (container.GetDependency(parameter.ParameterType) is null)
