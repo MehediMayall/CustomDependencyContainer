@@ -1,15 +1,16 @@
 namespace CustomDependencyContainer;
 
-public class LogInService: BaseService, ILogInService
+public class LogInService: ILogInService
 {
-     
+    private readonly ILogService logService;
 
-    public LogInService()
+    public LogInService(ILogService logService)
     {
+        this.logService = logService;
     }
 
     public void LogIn()
     {
-        log("->| Login successfully");
+        logService.log("->| Login successfully");
     }
 }
