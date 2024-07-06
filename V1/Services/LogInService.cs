@@ -2,9 +2,9 @@ namespace CustomDependencyContainer;
 
 public class LogInService: ILogInService
 {
-    private readonly ILogService logService;
+    private readonly LogService logService;
 
-    public LogInService(ILogService logService)
+    public LogInService(LogService logService)
     {
         this.logService = logService;
     }

@@ -5,9 +5,9 @@ var container = new DependencyContainer();
 container.AddDependency(typeof(LogService));
 container.AddDependency<LogInService>();
 
-var loginType = container.GetDependency(typeof(LogService));
+// var loginType = container.GetDependency(typeof(LogService));
 
-WriteLine(loginType);
+// WriteLine(loginType);
 
 
 

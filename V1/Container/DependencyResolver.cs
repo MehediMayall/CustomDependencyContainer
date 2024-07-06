@@ -8,12 +8,14 @@ public class DependencyResolver(DependencyContainer container)
         var dependency = container.GetDependency(typeof(T));
         var constructor = dependency.GetConstructors().Single();
         var parameters = constructor.GetParameters().ToArray();
+
+        if (parameters.Length == 0)
+            return (T) Activator.CreateInstance(dependency);
+
         List<object> parameterImplementations = new List<object>();
-
         foreach ( var parameter in parameters)
-            parameterImplementations.Append(Activator.CreateInstance(parameter.ParameterType));
-        
+            parameterImplementations.Add(Activator.CreateInstance(parameter.ParameterType));
 
-        return (T) Activator.CreateInstance(dependency, parameterImplementations);
+        return (T) Activator.CreateInstance(dependency, parameterImplementations.ToArray());
      }
 }

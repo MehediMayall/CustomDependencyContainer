@@ -8,7 +8,7 @@
             "name": "C#: CustomDependencyContainer Debug",
             "type": "dotnet",
             "request": "launch",
-            "projectPath": "${workspaceFolder}/CustomDependencyContainer.csproj"
+            "projectPath": "${workspaceFolder}/V1/CustomDependencyContainer.csproj"
         }
 
     ]
