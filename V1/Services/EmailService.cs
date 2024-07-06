@@ -1,10 +1,10 @@
 namespace CustomDependencyContainer;
 
-public class EmailService: IEmailService
+public class EmailService(LogService logService): IEmailService
 {
     public bool Send()
     {
-        System.Console.WriteLine("Email successfully sent!");
+        logService.log("Email successfully sent!");
         return true;
     }
 }
