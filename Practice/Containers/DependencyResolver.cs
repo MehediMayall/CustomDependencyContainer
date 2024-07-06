@@ -15,17 +15,8 @@ public class DependencyResolver(DependencyContainer container)
         ParameterInfo[] parameters = dependency.Type.GetConstructors().Single().GetParameters();
 
         if (parameters.Length == 0)
-        {
-            if (dependency.IsImplemented)
-                return dependency.Implementation;
-
-            var implementation = Activator.CreateInstance(dependency.Type); 
-
-            if (dependency.Lifetime == DependencyLifetime.SINGLETON)
-                return dependency.SentImplementation(implementation);
-
-            return  implementation;
-        }
+            return createImplementation(dependency, x =>  Activator.CreateInstance(dependency.Type));
+        
         
         List<object> constructorServices = new List<object>();
 
@@ -38,6 +29,19 @@ public class DependencyResolver(DependencyContainer container)
             constructorServices.Add(service);
         }
         
-        return Activator.CreateInstance(dependency.Type, constructorServices.ToArray());
+        return createImplementation(dependency, x=> Activator.CreateInstance(dependency.Type, constructorServices.ToArray()) );
+    }
+
+    private object createImplementation(Dependency dependency, Func<Type, object> factory)
+    {
+        if (dependency.IsImplemented)
+            return dependency.Implementation;
+
+        var implementation = factory(dependency.Type); 
+
+        if (dependency.Lifetime == DependencyLifetime.SINGLETON)
+            return dependency.SentImplementation(implementation);
+
+        return  implementation;
     }
 }
