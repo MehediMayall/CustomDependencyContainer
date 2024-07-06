@@ -1,15 +1,24 @@
 ﻿using CustomDependencyContainer;
-
+using static System.Console;
 
 var container = new DependencyContainer();
+
 container.AddSingleton<LogService>();
-container.AddSingleton<LogInService>();
+container.AddTransient<LoginService>();
+container.AddTransient<EmailService>();
+
+// var loginService = container.GetDependency(typeof(LoginService));
+// WriteLine(loginService.Type.Name);
+
+var resolver = new DependencyResolver(container);
+
+var logService = resolver.GetServices<LogService>();
+logService.log("Hello from dependency container instance");
 
 
-var resolver =  new DependencyResolver(container);
+// var emailService = resolver.GetServices<EmailService>();
+// emailService.Send();
 
-// var logService = resolver.GetServices<LogService>();
-// logService.log("Hello");
-
-var loginService = resolver.GetServices<LogInService>();
+var loginService = resolver.GetServices<LoginService>();
 loginService.Login();
+

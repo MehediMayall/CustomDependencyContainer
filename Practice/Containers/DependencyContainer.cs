@@ -8,13 +8,14 @@ public class DependencyContainer
         dependencies = new List<Dependency>();
     }
 
-    public void AddSingleton<T>()=>
-        dependencies.Add(new Dependency(typeof(T), DependencyLifetime.Singleton));
+    public void AddSingleton<T>() =>
+        dependencies.Add(new Dependency(typeof(T), DependencyLifetime.SINGLETON));
 
-    public void AddTransient<T>()=>
-        dependencies.Add(new Dependency(typeof(T), DependencyLifetime.Transient));
+    public void AddTransient<T>() =>
+        dependencies.Add(new Dependency(typeof(T), DependencyLifetime.TRANSIENT));
 
-    public Dependency GetDependency<T>() =>
-        dependencies.FirstOrDefault(x => x.Type.Name == typeof(T).Name);
+    public Dependency GetDependency(Type type)=>
+        dependencies.Find(x=> x.Type.Name == type.Name);
+
 
 }

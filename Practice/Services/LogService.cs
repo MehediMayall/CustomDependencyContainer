@@ -1,22 +1,22 @@
 namespace CustomDependencyContainer;
-
 using static Console;
-
-public  class LogService
+public class LogService
 {
+    private int instanceNo;
+    public LogService()
+    {
+        instanceNo = Random.Shared.Next(100,999);
+    } 
+
     public void log(string message)
     {
         Console.ForegroundColor = ConsoleColor.White;
-        WriteLine(message);
-    }
+        WriteLine($"{instanceNo}# {message}");
+    } 
     public void logSuccess(string message)
     {
         Console.ForegroundColor = ConsoleColor.DarkGreen;
-        WriteLine(message);
-    }
-    public void logError(string message)
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        WriteLine(message);
-    }
+        WriteLine($"{instanceNo}# {message}");
+    } 
+
 }

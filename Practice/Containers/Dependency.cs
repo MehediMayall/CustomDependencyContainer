@@ -6,7 +6,12 @@ public class Dependency(Type type, DependencyLifetime lifetime)
     public DependencyLifetime Lifetime = lifetime;
 
     public object Implementation {get; private set;}
-    public bool IsImplemented {get; private set;} = true;
+    public bool IsImplemented {get;private set;} = false;
 
-    public void SetImplementation(object implementation) => Implementation = implementation;
+    public object SentImplementation(object implementation) 
+    {
+        Implementation = implementation;
+        IsImplemented = true;
+        return Implementation;
+    }
 }
