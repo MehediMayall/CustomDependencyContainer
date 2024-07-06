@@ -15,7 +15,7 @@ public class DependencyContainer
         dependencies.Add(typeof(T));
     
 
-    public Type GetDependency(Type type) => 
-        dependencies.First(x => x.Name == type.Name);
+    public Type? GetDependency(Type type) => 
+        dependencies.Find(x => x.Name == type.Name);
     
 }
