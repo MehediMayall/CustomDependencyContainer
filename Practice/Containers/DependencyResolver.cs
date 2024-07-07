@@ -6,13 +6,20 @@ public class DependencyResolver(DependencyContainer container)
 {
     public T GetServices<T>()
     {
-        var dependency = container.GetDependency(typeof(T)) ?? 
-            throw new Exception($"{typeof(T).Name} is not registered. Please register this service");
+        return (T) GetServices(typeof(T));
+    }
+
+    public object GetServices(Type type)
+    {
+        var dependency = container.GetDependency(type) ?? 
+            throw new Exception($"{type.Name} is not registered. Please register this service");
 
         ParameterInfo[] parameters = dependency.Type.GetConstructors().Single().GetParameters();
 
         if ( parameters.Length ==0 )
-            return (T) Activator.CreateInstance(dependency.Type);
+        {
+            return CreateImplementation(dependency, x => Activator.CreateInstance(dependency.Type));
+        }
 
         List<object> constructorImplementations = new List<object>();
 
@@ -20,9 +27,26 @@ public class DependencyResolver(DependencyContainer container)
         {
             if ( container.GetDependency(parameter.ParameterType) is null)
                 throw new Exception($"{parameter.ParameterType.Name} is not registered. Please register this service");
-            constructorImplementations.Add(Activator.CreateInstance(parameter.ParameterType));
+
+            
+            constructorImplementations.Add(
+                GetServices(parameter.ParameterType)
+            );
         }
 
-        return (T) Activator.CreateInstance(dependency.Type, constructorImplementations.ToArray());
+        return CreateImplementation(dependency, x=> Activator.CreateInstance(dependency.Type, constructorImplementations.ToArray()));
+    }
+
+    private object CreateImplementation(Dependency dependency, Func<Type, object> factory)
+    {
+        if (dependency.IsImplemented)
+            return  dependency.Implementation;
+
+        var implementation = factory(dependency.Type);
+
+        if (dependency.Lifetime == DependencyLifetime.SINGLETON)
+            return  dependency.SetImplementation(implementation);
+
+        return implementation;
     }
 }
