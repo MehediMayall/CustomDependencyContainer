@@ -6,42 +6,23 @@ public class DependencyResolver(DependencyContainer container)
 {
     public T GetServices<T>()
     {
-        return (T) GetServices(typeof(T));
-    }
+        var dependency = container.GetDependency(typeof(T)) ?? 
+            throw new Exception($"{typeof(T).Name} is not registered. Please register this service");
 
-    public object GetServices(Type type)
-    {
-        var dependency = container.GetDependency(type);
         ParameterInfo[] parameters = dependency.Type.GetConstructors().Single().GetParameters();
 
-        if (parameters.Length == 0)
-            return createImplementation(dependency, x =>  Activator.CreateInstance(dependency.Type));
-        
-        
-        List<object> constructorServices = new List<object>();
+        if ( parameters.Length ==0 )
+            return (T) Activator.CreateInstance(dependency.Type);
 
-        foreach(var parameter in parameters)
+        List<object> constructorImplementations = new List<object>();
+
+        foreach(ParameterInfo parameter in parameters)
         {
-            if (container.GetDependency(parameter.ParameterType) is null)
-                throw new InvalidOperationException($"{parameter.ParameterType.Name} is not registered. Please register this dependency");
-
-            object service = GetServices(parameter.ParameterType);
-            constructorServices.Add(service);
+            if ( container.GetDependency(parameter.ParameterType) is null)
+                throw new Exception($"{parameter.ParameterType.Name} is not registered. Please register this service");
+            constructorImplementations.Add(Activator.CreateInstance(parameter.ParameterType));
         }
-        
-        return createImplementation(dependency, x=> Activator.CreateInstance(dependency.Type, constructorServices.ToArray()) );
-    }
 
-    private object createImplementation(Dependency dependency, Func<Type, object> factory)
-    {
-        if (dependency.IsImplemented)
-            return dependency.Implementation;
-
-        var implementation = factory(dependency.Type); 
-
-        if (dependency.Lifetime == DependencyLifetime.SINGLETON)
-            return dependency.SentImplementation(implementation);
-
-        return  implementation;
+        return (T) Activator.CreateInstance(dependency.Type, constructorImplementations.ToArray());
     }
 }

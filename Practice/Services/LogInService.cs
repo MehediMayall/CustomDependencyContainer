@@ -1,7 +1,6 @@
 namespace CustomDependencyContainer;
 
-public class LoginService(EmailService emailService, LogService logService)
+public class LoginService(LogService logService)
 {
-    public void Login() => logService.logSuccess("Successfully logged in");
-
+    public void LogIn() => logService.logSuccess("Successfully logged in");
 }
